@@ -1,0 +1,7 @@
+#!/bin/bash -ex
+source "$(dirname $0)/conf"
+
+echo 'Content-type: text/html\n\n'
+
+cd "$contentsdir"
+git pull

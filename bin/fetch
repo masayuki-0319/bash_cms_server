@@ -3,7 +3,7 @@ source "$(dirname $0)/conf"
 exec 2> "$logdir/$(basename $0).$(date +%Y%m%d_%H%M%S).$$"
 [ -n "${CONTENT_LENGTH}" ] && dd bs=${CONTENT_LENGTH} > /dev/null
 
-echo -e 'Content-type: text/html\n\n'
+echo -e 'Content-type: text/html\n'
 
 cd "$contentsdir"
 git pull
@@ -47,6 +47,9 @@ while read d ; do
         awk -v d="$d" '{gsub(/s\//,"=",d);
                 print "<a href=\"/?" d "\">" $0 "</a>"}' > "$datadir/$d/link"
 
+        ymd=$(sed 's/ .*//' < "$datadir/$d/created_time")
+        sed "s;</a>; ($ymd)&;" "$datadir/$d/link" > "$datadir/$d/link_date"
+
         touch "$datadir/$d/nav"
 done
 
@@ -80,3 +83,26 @@ while read ymd hms d ; do
         sed -e '1s/^/prev:/' -e '2s/^/next:/'                           |
         tr '\n' ' '                                     > "$datadir/$d/nav"
 done
+
+### MAKE KEYWORD LIST ###
+cd "$contentsdir"
+cat $tmp-list                    |
+awk '{print $3 "/main.md"}'      |
+xargs grep -H -m 1 '^Keywords:'  |
+sed 's;/main.md:Keywords:; ;'    |
+sed 's/ *, */,/g'                |
+sed 's/  */ /g'                  |
+awk '{gsub(/^/,",",$2);print}'   |
+sed 's/$/,/'                     > $tmp-keyword_list
+mv $tmp-keyword_list "$datadir/keyword_list"
+
+### MAKE SEARCH FILE ###
+cd "$contentsdir"
+cat $tmp-list                    |
+awk '{print $3 "/main.md"}'      |
+xargs grep -H ^                  |
+sed 's;/main.md:; ;'             |
+awk 'a!=$1{c=0;a=$1}c>=2{print}$2~/^---$/{c++}' |
+awk '$2~/^\*$|^#*$/{$2=""}{print}'              |
+awk 'NF>1'                      > $tmp-all
+mv $tmp-all "$datadir/all_markdown"

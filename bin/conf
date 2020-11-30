@@ -1,5 +1,5 @@
 contents_owner="masayuki-0319"
-contents="bash_cms_front"
+contents="bash_cms_dummy_contents"
 server="bash_cms_server"
 wwwdir="/var/www"
 contentsdir="$wwwdir/$contents"

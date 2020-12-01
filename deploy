@@ -1,3 +1,4 @@
+
 #!/bin/bash -eux
 source "$(dirname $0)/bin/conf"
 
@@ -22,5 +23,10 @@ rm -rf "${contentsdir:?}"
 cd "$wwwdir"
 git clone "https://github.com/$contents_owner/$contents"
 chown www-data:www-data "$contentsdir" -R
+
+### INITIALIZE ###
+touch "$datadir/INIT"
+chown www-data:www-data "$datadir/INIT"
+sudo -u www-data CONTENT_LENGTH="" "$appdir/fetch_$rnd.cgi"
 
 echo "call fetch_$rnd.cgi from GitHub"

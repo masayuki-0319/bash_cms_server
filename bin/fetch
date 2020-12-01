@@ -114,3 +114,12 @@ awk 'a!=$1{c=0;a=$1}c>=2{print}$2~/^---$/{c++}' |
 awk '$2~/^\*$|^#*$/{$2=""}{print}'              |
 awk 'NF>1'                      > $tmp-all
 mv $tmp-all "$datadir/all_markdown"
+
+### MAKE LATEST POST ###
+page=$( tail -n 1 "$datadir/post_list" | cut -d' ' -f 3 | sed 's;s/;=;')
+proto=$(awk '$1=="protocol:"{print $2}' "$contentsdir/config.yaml" | tr -d \')
+host=$(awk '$1=="host:"{print $2}' "$contentsdir/config.yaml" | tr -d \')
+
+echo $proto"//"$host"/?"$page > "$datadir/last_post"
+
+rm -f $tmp-*

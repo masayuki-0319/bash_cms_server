@@ -10,4 +10,5 @@ services:
       - "8080:80"
     volumes:
       - ./:/root/bash_cms_server
+      - ./bin/bsview/:/var/www/bash_cms_server/bsview/
       - ../bash_cms_front:/var/www/bash_cms_front

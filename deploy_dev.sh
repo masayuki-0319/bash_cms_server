@@ -1,6 +1,8 @@
 #!/bin/bash -eux
 source "$(dirname $0)/bin/conf"
 
+# [ "$USER" = "root" ] # USER MUST BE ROOT
+
 ### CREATE DIRECTORIES ###
 mkdir -p "$logdir" "$datadir" "$datadir/counters"
 chown www-data:www-data "$logdir" "$datadir" "$datadir/counters"
@@ -31,3 +33,5 @@ chown www-data:www-data "$datadir/INIT"
 $appdir/fetch_$rnd.cgi
 
 echo "call fetch_$rnd.cgi from GitHub"
+
+# NOTE: Docker 環境で不要なコマンドはコメントアウトしている
